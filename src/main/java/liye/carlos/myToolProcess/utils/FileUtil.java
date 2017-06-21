@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 
 import liye.carlos.myToolProcess.MainJob;
 import jxl.*;
+import liye.carlos.myToolProcess.constant.Constant;
 
 
 /**
@@ -35,9 +36,6 @@ public class FileUtil {
 
     public static void write(String msg, String path) throws IOException {
         File file = new File(path);
-        if (!file.exists()) {
-            file.createNewFile();
-        }
         OutputStream os = new FileOutputStream(file);
         os.write(msg.getBytes("utf-8"));
         os.close();
@@ -68,16 +66,16 @@ public class FileUtil {
                     String str = cell.getContents();
 
                     if (j == 0) {
-                        sb.append(MainJob.first).append(MainJob.date).append(MainJob.second).append(str);
+                        sb.append(Constant.first).append(Constant.date).append(Constant.second).append(str);
                     }
                     if (j == 1) {
-                        sb.append(MainJob.third).append(str);
+                        sb.append(Constant.third).append(str);
                     }
                     if (j == 2) {
-                        sb.append(MainJob.fourth).append(str);
+                        sb.append(Constant.fourth).append(str);
                     }
                     if (j == 3) {
-                        sb.append(MainJob.fifth).append(str);
+                        sb.append(Constant.fifth).append(str);
                     }
                 }
                 sb.append(System.getProperty("line.separator"));
@@ -88,6 +86,32 @@ public class FileUtil {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    public static String readFile(String Path){
+        BufferedReader reader = null;
+        String laststr = "";
+        try{
+            FileInputStream fileInputStream = new FileInputStream(Path);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+            reader = new BufferedReader(inputStreamReader);
+            String tempString = null;
+            while((tempString = reader.readLine()) != null){
+                laststr += tempString;
+            }
+            reader.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            if(reader != null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return laststr;
     }
 
 }

@@ -6,7 +6,7 @@ package liye.carlos.myToolProcess.algorithm;
 public class LinkedList {
 
 
-    static class ListNode {
+     public static class ListNode {
         int val;
         ListNode next;
 
@@ -15,6 +15,18 @@ public class LinkedList {
             next = null;
         }
     }
+
+
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
+
 
     /**
      * Given a linked list, determine if it has a cycle in it.
@@ -59,7 +71,7 @@ public class LinkedList {
             if (head.val < x) {
                 small.next = head;
                 small = small.next;
-            }else {
+            } else {
                 big.next = head;
                 big = big.next;
             }
@@ -69,6 +81,30 @@ public class LinkedList {
         small.next = bigHead.next;
         return smallHead.next;
     }
+
+    /**
+     * Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+     */
+    public TreeNode sortedListToBST(ListNode head) {
+            if(head==null) return null;
+            return toBST(head,null);
+
+    }
+    private TreeNode toBST(ListNode head, ListNode tail){
+        ListNode slow = head;
+        ListNode fast = head;
+        if(head==tail) return null;
+
+        while(fast!=tail&&fast.next!=tail){
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        TreeNode thead = new TreeNode(slow.val);
+        thead.left = toBST(head,slow);
+        thead.right = toBST(slow.next,tail);
+        return thead;
+    }
+
 
     public static void main(String[] args) {
         ListNode head = new ListNode(1);
