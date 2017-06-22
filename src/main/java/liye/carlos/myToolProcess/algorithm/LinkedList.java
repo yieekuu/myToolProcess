@@ -1,12 +1,14 @@
 package liye.carlos.myToolProcess.algorithm;
 
+import java.util.HashMap;
+
 /**
  * Created by liye3 on 2017/6/19.
  */
 public class LinkedList {
 
 
-     public static class ListNode {
+    public static class ListNode {
         int val;
         ListNode next;
 
@@ -86,33 +88,47 @@ public class LinkedList {
      * Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
      */
     public TreeNode sortedListToBST(ListNode head) {
-            if(head==null) return null;
-            return toBST(head,null);
+        if (head == null) return null;
+        return toBST(head, null);
 
     }
-    private TreeNode toBST(ListNode head, ListNode tail){
+
+    private TreeNode toBST(ListNode head, ListNode tail) {
         ListNode slow = head;
         ListNode fast = head;
-        if(head==tail) return null;
+        if (head == tail) return null;
 
-        while(fast!=tail&&fast.next!=tail){
+        while (fast != tail && fast.next != tail) {
             fast = fast.next.next;
             slow = slow.next;
         }
         TreeNode thead = new TreeNode(slow.val);
-        thead.left = toBST(head,slow);
-        thead.right = toBST(slow.next,tail);
+        thead.left = toBST(head, slow);
+        thead.right = toBST(slow.next, tail);
         return thead;
+    }
+
+    /**
+     * Remove Duplicates from Sorted List
+     * <p>
+     * Given a sorted linked list, delete all duplicates such that each element appear only once.
+     * <p>
+     * For example,
+     * Given 1->1->2, return 1->2.
+     * Given 1->1->2->3->3, return 1->2->3.
+     * <p>
+     * https://leetcode.com/problems/remove-duplicates-from-sorted-list/#/description
+     */
+    public static ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) return head;
+        head.next = deleteDuplicates(head.next);
+        return head.val == head.next.val ? head.next : head;
     }
 
 
     public static void main(String[] args) {
         ListNode head = new ListNode(1);
         head.next = new ListNode(1);
-        ListNode result = partitionList(head, 0);
-        while (result != null && result.next != null) {
-            System.out.println(result);
-            result = result.next;
-        }
+        ListNode result = deleteDuplicates(head);
     }
 }
