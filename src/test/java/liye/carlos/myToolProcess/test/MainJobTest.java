@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import liye.carlos.myToolProcess.dto.User;
 import liye.carlos.myToolProcess.utils.FileUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by xianren on 17/2/17.
  */
@@ -36,6 +39,9 @@ public class MainJobTest {
 
     public static void main(String[] args) throws Exception {
         String fileName = "/Users/xianren/code/excelBatchProcess/luckyDraw1225.xls";
+        List<String> aa = new ArrayList<>();
+        Long bb = (long)aa.size();
+        System.out.println(bb);
 //        File sss = new File(MainJob.class.getResource("/sendCouponTel.txt").getPath());
 //        String res = readFile(sss.getPath());
 //        List<String> mobileList = Arrays.asList(res.split(","));
