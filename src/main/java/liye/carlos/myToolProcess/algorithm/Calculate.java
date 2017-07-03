@@ -48,21 +48,15 @@ public class Calculate {
      * 537. Complex Number Multiplication
      * Given two strings representing two complex numbers.
      * You need to return a string representing their multiplication. Note i2 = -1 according to the definition.
-     * <p>
      * Example 1:
-     * <p>
      * Input: “1+1i”, “1+1i”
      * Output: “0+2i”
      * Explanation: (1 + i) * (1 + i) = 1 + i2 + 2 * i = 2i, and you need convert it to the form of 0+2i.
-     * <p>
      * Example 2:
-     * <p>
      * Input: “1+-1i”, “1+-1i”
      * Output: “0+-2i”
      * Explanation: (1 - i) * (1 - i) = 1 + i2 - 2 * i = -2i, and you need convert it to the form of 0+-2i.
-     * <p>
      * Note:
-     * <p>
      * 1. The input strings will not have extra blank.
      * 2. The input strings will be given in the form of a+bi, where the integer a and b will both belong to the range of [-100, 100]. And the output should be also in this form.
      * <p>
@@ -90,8 +84,63 @@ public class Calculate {
         return resultLeft + "+" + resultRight + "i";
     }
 
+    /**
+     * 326. Power of Three
+     * Given an integer, write a function to determine if it is a power of three.
+     * Follow up:
+     * Could you do it without using any loop / recursion?
+     * <p>
+     * https://leetcode.com/problems/power-of-three/#/description
+     * <p>
+     * int -2147483648~2147483647
+     * Math.pow(3,19)=1162261467=3^19<2147483647;
+     */
+    public boolean isPowerOfThree(int n) {
+        return !(n <= 0) && (1162261467 % n == 0);
+    }
+
+    /**
+     * 50. Pow(x, n)
+     * <p>
+     * Implement pow(x, n).
+     * <p>
+     * https://leetcode.com/problems/powx-n/#/description
+     */
+    public static double myPow(double x, int n) {
+        if (n == 0) {
+            return 1;
+        }
+        if (n < 0) {
+            n = -n;
+            x = 1 / x;
+//            return 1 / (myPow(x, -(n+1))*x);
+        }
+        return n % 2 == 1 ? (x * myPow(x * x, n / 2)) : (myPow(x * x, n / 2));
+    }
+
+    /**
+     * 12. Integer to Roman
+     * <p>
+     * Given an integer, convert it to a roman numeral.
+     * <p>
+     * Input is guaranteed to be within the range from 1 to 3999.
+     * <p>
+     * https://leetcode.com/problems/integer-to-roman/#/description
+     * I II III IV V VI VII VIII IX X
+     * I(1)，V(5)，X(10)，L(50)，C(100)，D(500)，M(1000)
+     * 同一字母不能连续出现3次
+     * 类似于查表的方式
+     */
+    public static String intToRoman(int num) {
+        String M[] = {"", "M", "MM", "MMM"};
+        String C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        return M[num/1000] + C[(num%1000)/100] + X[(num%100)/10] + I[num%10];
+    }
+
     public static void main(String[] args) {
-        complexNumberMultiply("1+1i","1+1i");
+        System.out.println(intToRoman(3550));
     }
 
 }
