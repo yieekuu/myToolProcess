@@ -18,7 +18,6 @@ public class BinaryTree {
     }
 
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
         BinaryTree G = new BinaryTree(null, null, 'G');
         BinaryTree H = new BinaryTree(null, null, 'H');
         BinaryTree F = new BinaryTree(G, H, 'F');
