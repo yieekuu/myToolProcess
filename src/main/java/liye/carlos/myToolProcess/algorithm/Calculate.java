@@ -2,6 +2,7 @@ package liye.carlos.myToolProcess.algorithm;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.lang.String;
 
 /**
  * Created by liye3 on 2017/6/27.
@@ -134,11 +135,42 @@ public class Calculate {
         String C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
         String X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
         String I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
-        return M[num/1000] + C[(num%1000)/100] + X[(num%100)/10] + I[num%10];
+        return M[num / 1000] + C[(num % 1000) / 100] + X[(num % 100) / 10] + I[num % 10];
+    }
+
+    /**
+     * 29. Divide Two Integers
+     * <p>
+     * Divide two integers without using multiplication, division and mod operator.
+     * <p>
+     * If it is overflow, return MAX_INT.
+     * <p>
+     * https://leetcode.com/problems/divide-two-integers/#/description
+     */
+    public static int divide(int dividend, int divisor) {
+        if (divisor == 0 || (dividend == Integer.MIN_VALUE && divisor == -1)) {
+            return Integer.MAX_VALUE;
+        }
+        int sign = (dividend < 0) ^ (divisor < 0) ? -1 : 1;
+        long dvd = Math.abs((long)dividend);
+        long dvs = Math.abs((long)divisor);
+        int result = 0;
+        while (dvd >= dvs) {
+            int temp = 1;
+            long shiftDivisor = dvs;
+            while (dvd >= shiftDivisor << 1) {
+                shiftDivisor <<= 1;
+                temp <<= 1;
+            }
+            dvd -= shiftDivisor;
+            result += temp;
+        }
+
+        return sign == 1 ? result : -result;
     }
 
     public static void main(String[] args) {
-        System.out.println(intToRoman(3550));
+        System.out.println(divide(-2147483648,1));
     }
 
 }

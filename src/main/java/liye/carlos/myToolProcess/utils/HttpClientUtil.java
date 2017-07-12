@@ -64,7 +64,7 @@
 //            // 相信自己的CA和所有自签名的证书
 //            SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new TrustSelfSignedStrategy()).build();
 //            // 只允许使用TLSv1协议
-//            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null,
+//            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new Strings[] { "TLSv1" }, null,
 //                    SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
 //            httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
 //            // 创建http请求(get方式)

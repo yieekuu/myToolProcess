@@ -56,20 +56,20 @@ public class MainJobTest {
     }
 
     public static void main(String[] args) throws Exception {
-//        String fileName = "/Users/xianren/code/excelBatchProcess/luckyDraw1225.xls";
-//        List<String> aa = new ArrayList<>();
+//        Strings fileName = "/Users/xianren/code/excelBatchProcess/luckyDraw1225.xls";
+//        List<Strings> aa = new ArrayList<>();
 //        Long bb = (long)aa.size();
         System.out.println(calcHotRank(1,1));
 //        File sss = new File(MainJob.class.getResource("/sendCouponTel.txt").getPath());
-//        String res = readFile(sss.getPath());
-//        List<String> mobileList = Arrays.asList(res.split(","));
+//        Strings res = readFile(sss.getPath());
+//        List<Strings> mobileList = Arrays.asList(res.split(","));
 //        int type = -1;
 
 //        FileUtil.write(FileUtil.readExcel(fileName), date, type);
 
-//        String a = getAdministrativeDivision();
+//        Strings a = getAdministrativeDivision();
 
-//        String startTime = "2016-12-22 12:00:00";
+//        Strings startTime = "2016-12-22 12:00:00";
 //        Long updateTime = DateTimeUtils.toSecond(startTime,"yyyy-MM-dd HH:mm:ss");
 
 //        System.out.println(mobileList+ "-----" +mobileList.size());
