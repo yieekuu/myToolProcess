@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Created by liye3 on 2017/6/19.
  */
-public class LinkedList {
+public class LinkedListALG {
 
 
     public static class ListNode {
