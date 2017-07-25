@@ -1,14 +1,15 @@
 package liye.carlos.myToolProcess.algorithm;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
  * Created by liye3 on 2017/7/7.
  */
-public class Array {
+public class ArrayALG {
 
     /**
-     * 81. Search in Rotated Sorted Array II
+     * 81. Search in Rotated Sorted ArrayALG II
      * <p>
      * Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
      * <p>
@@ -52,7 +53,7 @@ public class Array {
     }
 
     /**
-     * 532. K-diff Pairs in an Array
+     * 532. K-diff Pairs in an ArrayALG
      * <p>
      * Given an array of integers and an integer k, you need to find the number of unique k-diff pairs in the array. Here a k-diff pair is defined as an integer pair (i, j), where i and j are both numbers in the array and their absolute difference is k.
      * <p>
@@ -332,8 +333,255 @@ public class Array {
         return new int[]{start, end};
     }
 
+    /**
+     * 417. Pacific Atlantic Water Flow
+     * <p>
+     * Given an m x n matrix of non-negative integers representing the height of each unit cell in a continent,
+     * the “Pacific ocean” touches the left and top edges of the matrix and
+     * the “Atlantic ocean” touches the right and bottom edges.
+     * <p>
+     * Water can only flow in four directions (up, down, left, or right) from a cell to another one with height equal or lower.
+     * <p>
+     * Find the list of grid coordinates where water can flow to both the Pacific and Atlantic ocean.
+     * <p>
+     * Note:
+     * The order of returned grid coordinates does not matter.
+     * Both m and n are less than 150.
+     * Example:
+     * <p>
+     * Given the following 5x5 matrix:
+     * <p>
+     * Pacific ~   ~   ~   ~   ~
+     * ~  1   2   2   3  (5) *
+     * ~  3   2   3  (4) (4) *
+     * ~  2   4  (5)  3   1  *
+     * ~ (6) (7)  1   4   5  *
+     * ~ (5)  1   1   2   4  *
+     * *   *   *   * Atlantic
+     * <p>
+     * Return:
+     * <p>
+     * [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] (positions with parentheses in above matrix).
+     * <p>
+     * https://leetcode.com/problems/pacific-atlantic-water-flow/#/description
+     */
+    int[][] dir = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+    public List<int[]> pacificAtlantic1(int[][] matrix) {
+        List<int[]> res = new LinkedList<>();
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return res;
+        }
+        int n = matrix.length, m = matrix[0].length;
+        //One visited map for each ocean
+        boolean[][] pacific = new boolean[n][m];
+        boolean[][] atlantic = new boolean[n][m];
+        Queue<int[]> pQueue = new LinkedList<>();
+        Queue<int[]> aQueue = new LinkedList<>();
+        for (int i = 0; i < n; i++) { //Vertical border
+            pQueue.offer(new int[]{i, 0});
+            aQueue.offer(new int[]{i, m - 1});
+            pacific[i][0] = true;
+            atlantic[i][m - 1] = true;
+        }
+        for (int i = 0; i < m; i++) { //Horizontal border
+            pQueue.offer(new int[]{0, i});
+            aQueue.offer(new int[]{n - 1, i});
+            pacific[0][i] = true;
+            atlantic[n - 1][i] = true;
+        }
+        bfs(matrix, pQueue, pacific);
+        bfs(matrix, aQueue, atlantic);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (pacific[i][j] && atlantic[i][j])
+                    res.add(new int[]{i, j});
+            }
+        }
+        return res;
+    }
+
+    public void bfs(int[][] matrix, Queue<int[]> queue, boolean[][] visited) {
+        int n = matrix.length, m = matrix[0].length;
+        while (!queue.isEmpty()) {
+            int[] cur = queue.poll();
+            for (int[] d : dir) {
+                int x = cur[0] + d[0];
+                int y = cur[1] + d[1];
+                if (x < 0 || x >= n || y < 0 || y >= m || visited[x][y] || matrix[x][y] < matrix[cur[0]][cur[1]]) {
+                    continue;
+                }
+                visited[x][y] = true;
+                queue.offer(new int[]{x, y});
+            }
+        }
+    }
+
+    public List<int[]> pacificAtlantic2(int[][] matrix) {
+        List<int[]> res = new LinkedList<>();
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return res;
+        }
+        int n = matrix.length, m = matrix[0].length;
+        boolean[][] pacific = new boolean[n][m];
+        boolean[][] atlantic = new boolean[n][m];
+        for (int i = 0; i < n; i++) {
+            dfs(matrix, pacific, Integer.MIN_VALUE, i, 0);
+            dfs(matrix, atlantic, Integer.MIN_VALUE, i, m - 1);
+        }
+        for (int i = 0; i < m; i++) {
+            dfs(matrix, pacific, Integer.MIN_VALUE, 0, i);
+            dfs(matrix, atlantic, Integer.MIN_VALUE, n - 1, i);
+        }
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (pacific[i][j] && atlantic[i][j])
+                    res.add(new int[]{i, j});
+        return res;
+    }
+
+    public void dfs(int[][] matrix, boolean[][] visited, int height, int x, int y) {
+        int n = matrix.length, m = matrix[0].length;
+        if (x < 0 || x >= n || y < 0 || y >= m || visited[x][y] || matrix[x][y] < height)
+            return;
+        visited[x][y] = true;
+        for (int[] d : dir) {
+            dfs(matrix, visited, matrix[x][y], x + d[0], y + d[1]);
+        }
+    }
+
+    /**
+     * 52. N-Queens II
+     * <p>
+     * Follow up for N-Queens problem.
+     * <p>
+     * Now, instead outputting board configurations, return the total number of distinct solutions.
+     * <p>
+     * https://leetcode.com/problems/n-queens-ii/#/description
+     */
+    private int count = 0;
+
+    public int totalNQueens(int n) {
+        if (n < 1) return 0;
+        boolean[] cols = new boolean[n];     // columns   |
+        boolean[] d1 = new boolean[2 * n];   // diagonals \
+        boolean[] d2 = new boolean[2 * n];   // diagonals /
+        backtracking(0, cols, d1, d2, n);
+        return count;
+    }
+
+    public void backtracking(int row, boolean[] cols, boolean[] d1, boolean[] d2, int n) {
+        if (row == n) count++;
+
+        for (int col = 0; col < n; col++) {
+            int id1 = col - row + n;
+            int id2 = col + row;
+            if (cols[col] || d1[id1] || d2[id2]) continue;
+
+            cols[col] = true;
+            d1[id1] = true;
+            d2[id2] = true;
+            backtracking(row + 1, cols, d1, d2, n);
+            cols[col] = false;
+            d1[id1] = false;
+            d2[id2] = false;
+        }
+    }
+
+    /**
+     * 611. Valid Triangle Number
+     * <p>
+     * Given an array consists of non-negative integers,
+     * your task is to count the number of triplets chosen from the array that
+     * can make triangles if we take them as side lengths of a triangle.
+     * <p>
+     * Example 1:
+     * Input: [2,2,3,4]
+     * Output: 3
+     * Explanation:
+     * Valid combinations are:
+     * 2,3,4 (using the first 2)
+     * 2,3,4 (using the second 2)
+     * 2,2,3
+     * Note:
+     * The length of the given array won’t exceed 1000.
+     * The integers in the given array are in the range of [0, 1000].
+     * <p>
+     * https://leetcode.com/problems/valid-triangle-number/#/description
+     */
+    public int triangleNumber(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return 0;
+        }
+        int result = 0;
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 2; i++) {
+            for (int j = i + 1; j < nums.length - 1; j++) {
+                for (int m = j + 1; m < nums.length; m++) {
+                    if (nums[i] + nums[j] <= nums[m]) {
+                        break;
+                    }
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    public int triangleNumber1(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return 0;
+        }
+        int result = 0;
+        Arrays.sort(nums);
+        for (int i = nums.length - 1; i > 0; i--) {
+            int left = 0;
+            int right = i - 1;
+            while (left < right) {
+                if (nums[left] + nums[right] > nums[i]) {
+                    result += right - left;
+                    right--;
+                } else {
+                    left++;
+                }
+            }
+        }
+        return result;
+    }
+
+
+    private int binarySearchForTriangleNumber(int nums[], int l, int r, int x) {
+        while (r >= l && r < nums.length) {
+            int mid = (l + r) / 2;
+            if (nums[mid] >= x)
+                r = mid - 1;
+            else
+                l = mid + 1;
+        }
+        return l;
+    }
+
+    public int triangleNumber2(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return 0;
+        }
+        int result = 0;
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 2; i++) {
+            int k = i + 2;
+            for (int j = i + 1; j < nums.length - 1 && nums[i] != 0; j++) {
+                k = binarySearchForTriangleNumber(nums, k, nums.length - 1, nums[i] + nums[j]);
+                result += k - j - 1;
+            }
+        }
+        return result;
+    }
+
+
     public static void main(String[] args) {
-        int[] nums = {-1, 0, 0, 0, 0, 0, 1};
-        System.out.println(fourSum(nums, 0));
+        int[] nums = {2, 2, 3, 4};
+        ArrayALG arrayALG = new ArrayALG();
+        System.out.println(arrayALG.triangleNumber2(nums));
+        System.out.println(arrayALG.triangleNumber1(nums));
     }
 }
