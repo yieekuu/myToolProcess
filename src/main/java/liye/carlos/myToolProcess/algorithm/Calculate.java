@@ -1,5 +1,6 @@
 package liye.carlos.myToolProcess.algorithm;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.lang.String;
@@ -152,8 +153,8 @@ public class Calculate {
             return Integer.MAX_VALUE;
         }
         int sign = (dividend < 0) ^ (divisor < 0) ? -1 : 1;
-        long dvd = Math.abs((long)dividend);
-        long dvs = Math.abs((long)divisor);
+        long dvd = Math.abs((long) dividend);
+        long dvs = Math.abs((long) divisor);
         int result = 0;
         while (dvd >= dvs) {
             int temp = 1;
@@ -169,8 +170,58 @@ public class Calculate {
         return sign == 1 ? result : -result;
     }
 
+    /**
+     * 556. Next Greater Element III
+     * <p>
+     * Given a positive 32-bit integer n, you need to find the smallest 32-bit integer
+     * which has exactly the same digits existing in the integer n and is greater in value than n.
+     * If no such positive 32-bit integer exists, you need to return -1.
+     * <p>
+     * Example 1:
+     * Input: 12
+     * Output: 21
+     * Example 2:
+     * Input: 21
+     * Output: -1
+     * <p>
+     * https://leetcode.com/problems/next-greater-element-iii/#/description
+     */
+    public int nextGreaterElement(int n) {
+        char[] number = (n + "").toCharArray();
+
+        int i, j;
+        for (i = number.length - 1; i > 0; i--) {
+            if (number[i - 1] < number[i])
+                break;
+        }
+
+        if (i == 0) {
+            return -1;
+        }
+        // II) Find the smallest digit on right side of (i-1)'th
+        // digit that is greater than number[i-1]
+        int x = number[i - 1], smallest = i;
+        for (j = i + 1; j < number.length; j++) {
+            if (number[j] > x && number[j] <= number[smallest])
+                smallest = j;
+        }
+        // III) Swap the above found smallest digit with
+        // number[i-1]
+        char temp = number[i - 1];
+        number[i - 1] = number[smallest];
+        number[smallest] = temp;
+
+        // IV) Sort the digits after (i-1) in ascending order
+        Arrays.sort(number, i, number.length);
+
+        long val = Long.parseLong(new String(number));
+        return (val <= Integer.MAX_VALUE) ? (int) val : -1;
+    }
+
     public static void main(String[] args) {
-        System.out.println(divide(-2147483648,1));
+        Calculate calculate = new Calculate();
+        System.out.println(calculate.nextGreaterElement(546789));
+
     }
 
 }
