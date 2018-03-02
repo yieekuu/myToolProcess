@@ -1,5 +1,8 @@
 package liye.carlos.myToolProcess.algorithm;
 
+import liye.carlos.myToolProcess.dto.User;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 /**
@@ -132,7 +135,27 @@ public class StringALG {
     }
 
     public static void main(String[] args) {
+        List<User> users = new ArrayList<>();
+        for(int i = 1;i<13;i++){
+            User user = new User();
+            user.setName("2017" + (i < 10 ? ("0" + i) : i) + "10081030");
+            if(i==1){
+                user.setName("20171209081030");
+            }
+            if(i==2){
+                user.setName("20180101011030");
+            }
 
-        System.out.println(checkInclusion("ab", "eaidbaoo"));
+            users.add(user);
+        }
+
+        users.sort((User o1, User o2) -> {
+            String time1 = o1.getName();
+            String time2 = o2.getName();
+            return StringUtils.compare(time2, time1);
+        });
+
+        int a = StringUtils.compare("10小时前","4小时前");//
+        System.out.println(users.toString());
     }
 }

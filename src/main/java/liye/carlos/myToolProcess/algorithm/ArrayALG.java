@@ -642,4 +642,6 @@ public class ArrayALG {
             System.out.println(Arrays.toString(res[i]));
         }
     }
+
+
 }
