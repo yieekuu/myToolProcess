@@ -1,8 +1,7 @@
 package liye.carlos.myToolProcess.algorithm;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 import java.lang.String;
 
 /**
@@ -218,9 +217,46 @@ public class Calculate {
         return (val <= Integer.MAX_VALUE) ? (int) val : -1;
     }
 
+    public int APlusB(int a, int b) {
+        while (a != 0) {
+            int temp = (a & b) << 1;
+            b = a ^ b;
+            a = temp;
+        }
+        return b;
+    }
+
+    //发红包算法，金额参数以分为单位
+    public static List<Integer> divideRedPackage(
+            Integer totalAmount,
+            Integer totalPeopleNum) {
+        List<Integer> amountList = new ArrayList<Integer>();
+        Integer restAmount = totalAmount;
+        Integer restPeopleNum = totalPeopleNum;
+        Random random = new Random();
+        for (int i = 0; i < totalPeopleNum - 1; i++) {
+            //随机范围：[1，剩余人均金额的两倍)，左闭右开
+            int amount = random.nextInt(restAmount / restPeopleNum * 2 - 1) + 1;
+            restAmount -= amount;
+            restPeopleNum--;
+            amountList.add(amount);
+        }
+        amountList.add(restAmount);
+        return amountList;
+    }
+
+
     public static void main(String[] args) {
-        Calculate calculate = new Calculate();
-        System.out.println(calculate.nextGreaterElement(546789));
+
+        List<Integer> amountList = divideRedPackage(5000, 30);
+        for (Integer amount : amountList) {
+            System.out.println("抢到金额：" + new BigDecimal(amount).divide(new BigDecimal(100)));
+        }
+
+
+//        Calculate calculate = new Calculate();
+//        System.out.println(calculate.nextGreaterElement(546789));
+//        System.out.println(calculate.APlusB(3, 5));
 
     }
 
