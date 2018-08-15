@@ -629,19 +629,101 @@ public class ArrayALG {
         }
         int[][] result = new int[r][c];
         for (int i = 0; i < r * c; i++) {
-            result[i/c][i%c] = nums[i/n][i%n];
+            result[i / c][i % c] = nums[i / n][i % n];
         }
         return result;
     }
 
+    /**
+     * 697. Degree of an Array
+     * Given a non-empty array of non-negative integers nums, the degree of this array is defined as the maximum frequency of any one of its elements.
+     * Your task is to find the smallest possible length of a (contiguous) subarray of nums, that has the same degree as nums.
+     * Example 1:
+     * Input: [1, 2, 2, 3, 1]
+     * Output: 2
+     * Explanation:
+     * The input array has a degree of 2 because both elements 1 and 2 appear twice.
+     * Of the subarrays that have the same degree:
+     * [1, 2, 2, 3, 1], [1, 2, 2, 3], [2, 2, 3, 1], [1, 2, 2], [2, 2, 3], [2, 2]
+     * The shortest length is 2. So return 2.
+     * 提示：提交代码后，需要用简洁的语言解释一下代码思路~ 谢谢
+     * 历史题目和总结见公众号「每日一道算法题」
+     * https://leetcode.com/problems/degree-of-an-array/description/
+     */
+    public int findShortestSubArray(int[] nums) {
+        if (null == nums || nums.length < 1) {
+            return 0;
+        }
+        if (nums.length == 1) {
+            return 1;
+        }
+        HashMap<Integer, Integer> countMap = new HashMap<>();
+        HashMap<Integer, Integer> leftMap = new HashMap<>();
+        HashMap<Integer, Integer> rightMap = new HashMap<>();
+        int size = nums.length;
+
+        for (int i = 0; i < size; i++) {
+            if (!countMap.containsKey(nums[i])) {
+                countMap.put(nums[i], 0);
+                leftMap.put(nums[i], i);
+            }
+            countMap.put(nums[i], countMap.get(nums[i]) + 1);
+            rightMap.put(nums[i], i);
+        }
+        int degree = Collections.max(countMap.values());
+        Integer result = size;
+        for(Map.Entry<Integer,Integer> entry:countMap.entrySet()){
+            if (entry.getValue() == degree) {
+                int tmp = rightMap.get(entry.getKey()) - leftMap.get(entry.getKey())+1;
+                result = Math.min(tmp,result);
+            }
+        }
+
+        return result;
+    }
+
+
     public static void main(String[] args) {
         int[][] nums = {{2, 2, 3, 4}, {1, 2, 3, 4}};
         ArrayALG arrayALG = new ArrayALG();
-        int[][] res = (arrayALG.matrixReshape(nums,1,8));
-        for(int i = 0;i<res.length;i++){
+        int[][] res = (arrayALG.matrixReshape(nums, 1, 8));
+        for (int i = 0; i < res.length; i++) {
             System.out.println(Arrays.toString(res[i]));
         }
     }
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
