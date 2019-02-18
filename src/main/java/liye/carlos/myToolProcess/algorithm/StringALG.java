@@ -134,28 +134,82 @@ public class StringALG {
         return true;
     }
 
-    public static void main(String[] args) {
-        List<User> users = new ArrayList<>();
-        for(int i = 1;i<13;i++){
-            User user = new User();
-            user.setName("2017" + (i < 10 ? ("0" + i) : i) + "10081030");
-            if(i==1){
-                user.setName("20171209081030");
-            }
-            if(i==2){
-                user.setName("20180101011030");
-            }
+    /*22. Generate Parentheses
+    Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+    For example, given n = 3, a solution set is:
+            [
+            "((()))",
+            "(()())",
+            "(())()",
+            "()(())",
+            "()()()"
+            ]
+    提示：提交代码后，需要用简洁的语言解释一下代码思路~ 谢谢
+    历史题目和总结见公众号「每日一道算法题」
+    https://leetcode.com/problems/generate-parentheses/description/
+    */
+    public List<String> generateParenthesis(int n) {
+        List<String> ans = new ArrayList();
+        backtrack(ans, "", 0, 0, n);
+        return ans;
+    }
 
-            users.add(user);
+    public void backtrack(List<String> ans, String cur, int open, int close, int max) {
+        if (cur.length() == max * 2) {
+            ans.add(cur);
+            return;
         }
 
-        users.sort((User o1, User o2) -> {
-            String time1 = o1.getName();
-            String time2 = o2.getName();
-            return StringUtils.compare(time2, time1);
-        });
+        if (open < max)
+            backtrack(ans, cur + "(", open + 1, close, max);
+        if (close < open)
+            backtrack(ans, cur + ")", open, close + 1, max);
+    }
 
-        int a = StringUtils.compare("10小时前","4小时前");//
-        System.out.println(users.toString());
+    /*
+    409. Longest Palindrome
+    Given a string which consists of lowercase or uppercase letters, find the length of the longest palindromes that can be built with those letters.
+    This is case sensitive, for example “Aa” is not considered a palindrome here.
+    Note:
+    Assume the length of given string will not exceed 1,010.
+    Example:
+    Input:
+            “abccccdd”
+    Output:
+            7
+    Explanation:
+    One longest palindrome that can be built is “dccaccd”, whose length is 7.
+    提示：提交代码后，需要用简洁的语言解释一下代码思路~ 谢谢
+    历史题目和总结见公众号「每日一道算法题」
+    https://leetcode.com/problems/longest-palindrome/description/
+    */
+    public static int longestPalindrome(String s) {
+        int result = 0;
+        if (s == null) {
+            return 0;
+        }
+
+        int[] aa = new int[52];
+        for (int i = 0; i < s.length(); i++) {
+            aa[s.charAt(i) - 'A' > 25 ? s.charAt(i) - 'A' - 6 : s.charAt(i) - 'A']++;
+        }
+
+        boolean hasSingle = false;
+        for (int j = 0; j < 52; j++) {
+            if (aa[j] > 1) {
+                result += (aa[j] / 2) * 2;
+            }
+            if (aa[j] % 2 == 1) {
+                hasSingle = true;
+            }
+        }
+
+        return hasSingle ? result + 1 : result;
+    }
+
+
+    public static void main(String[] args) {
+        int ssss = longestPalindrome("abccccdd");
+        System.out.println(ssss);
     }
 }
