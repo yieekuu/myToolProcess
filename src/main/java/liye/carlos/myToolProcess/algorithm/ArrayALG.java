@@ -734,7 +734,7 @@ public class ArrayALG {
         int step = 1;
         int head = 1;
         while (remaining > 1) {
-            if (left || remaining % 2 ==1) {
+            if (left || remaining % 2 == 1) {
                 head = head + step;
             }
             remaining = remaining / 2;
@@ -744,13 +744,219 @@ public class ArrayALG {
         return head;
     }
 
-    public static void main(String[] args) {
-        int[][] nums = {{2, 2, 3, 4}, {1, 2, 3, 4}};
-        ArrayALG arrayALG = new ArrayALG();
-        int[][] res = (arrayALG.matrixReshape(nums, 1, 8));
-        for (int i = 0; i < res.length; i++) {
-            System.out.println(Arrays.toString(res[i]));
+    /*
+    229. Majority Element II
+    Given an integer array of size n, find all elements that appear more than ⌊ n/3 ⌋ times. The algorithm should run in linear time and in O(1) space.
+    提示：提交代码后，需要用简洁的语言解释一下代码思路~ 谢谢
+    历史题目和总结见公众号「每日一道算法题」
+    https://leetcode.com/problems/majority-element-ii/description/
+    */
+    /*
+    思路：摩尔投票升级版，超过n/3的数最多只能有两个；
+    先选出两个候选人A,B,遍历数组，如果投A（等于A），则A的票数++;如果投B，B的票数++；
+    如果A,B都不投（即与A，B都不相等）,那么检查此时是否AB中候选人的票数是否为0，如果为0,则成为新的候选人；
+    如果A,B两个人的票数都不为0，那么A,B两个候选人的票数均--；
+    遍历结束后选出两个候选人，但是这两个候选人是否满足>n/3，还需要再遍历一遍数组，找出两个候选人的具体票数
+     */
+    public List<Integer> majorityElement1(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return null;
         }
+
+        //初始化，定义两个候选人以及对应的票数
+        int candidateA = nums[0];
+        int candidateB = nums[0];
+        int countA = 0;
+        int countB = 0;
+
+        // 遍历数组
+        for (int num : nums) {
+            if (num == candidateA) { //投A
+                countA++;
+                continue;
+            }
+
+            if (num == candidateB) {// 投B
+                countB++;
+                continue;
+            }
+            //此时A,B都不投,检查是否有票数为0情况，如果为0，则更新候选人
+            if (countA == 0) {
+                candidateA = num;
+                countA++;
+                continue;
+            }
+
+            if (countB == 0) {
+                candidateB = num;
+                countB++;
+                continue;
+            }
+
+            //此时两个候选人的票数都大于1，且当前选名不投AB，那么A,B对应的票数都要--;
+            countA--;
+            countB--;
+        }
+
+        // 上一轮遍历找出了两个候选人，但是这两个候选人是否均满足票数大于N/3仍然没法确定，需要重新遍历，确定票数
+        countA = 0;
+        countB = 0;
+
+        for (int num : nums) {
+            if (num == candidateA) {
+                countA++;
+            } else if (num == candidateB) {
+                countB++;
+            }
+        }
+
+        List<Integer> resultList = new ArrayList<>();
+
+        if (countA > nums.length / 3) {
+            resultList.add(candidateA);
+        }
+
+        if (countB > nums.length / 3) {
+            resultList.add(candidateB);
+        }
+
+        return resultList;
+    }
+
+    public static List<Integer> majorityElement(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        int candidate1 = 0;
+        int candidate2 = 1;
+        int count1 = 0;
+        int count2 = 0;
+        for (int n : nums) {
+            if (candidate1 == n) {
+                count1++;
+            } else if (candidate2 == n) {
+                count2++;
+            } else if (count1 == 0) {
+                candidate1 = n;
+                count1 = 1;
+            } else if (count2 == 0) {
+                candidate2 = n;
+                count2 = 1;
+            } else {
+                count1--;
+                count2--;
+            }
+        }
+        List<Integer> result = new ArrayList<>();
+        count1 = 0;
+        count2 = 0;
+        for (int n : nums) {
+            if (candidate1 == n) count1++;
+            else if (candidate2 == n) count2++;
+        }
+        if (count1 > nums.length / 3) result.add(candidate1);
+        if (count2 > nums.length / 3) result.add(candidate2);
+        return result;
+    }
+
+    /*
+    334. Increasing Triplet Subsequence
+    Given an unsorted array return whether an increasing subsequence of length 3 exists or not in the array.
+    Formally the function should:
+    Return true if there exists i, j, k
+    such that arr[i] < arr[j] < arr[k] given 0 ≤ i < j < k ≤ n-1 else return false.
+    Your algorithm should run in O(n) time complexity and O(1) space complexity.
+    Examples:
+    Given [1, 2, 3, 4, 5],
+            return true.
+    Given [5, 4, 3, 2, 1],
+            return false.
+    提示：提交代码后，需要用简洁的语言解释一下代码思路~ 谢谢
+    历史题目和总结见公众号「每日一道算法题」
+    https://leetcode.com/problems/increasing-triplet-subsequence/description/
+    */
+    public boolean increasingTriplet(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return false;
+        }
+        int small = Integer.MAX_VALUE;
+        int big = Integer.MAX_VALUE;
+        for (int n : nums) {
+            if (small >= n) {
+                small = n;
+            } else if (big >= n) {
+                big = n;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+    473. Matchsticks to Square
+    Remember the story of Little Match Girl? By now, you know exactly what matchsticks the little match girl has, please find out a way you can make one square by using up all those matchsticks. You should not break any stick, but you can link them up, and each matchstick must be used exactly one time.
+    Your input will be several matchsticks the girl has, represented with their stick length. Your output will either be true or false, to represent whether you could make one square using all the matchsticks the little match girl has.
+            Example 1:
+    Input: [1,1,2,2,2]
+    Output: true
+    Explanation: You can form a square with length 2, one side of the square came two sticks with length 1.
+    Example 2:
+    Input: [3,3,3,3,4]
+    Output: false
+    Explanation: You cannot find a way to form a square with all the matchsticks.
+            Note:
+    The length sum of the given matchsticks is in the range of 0 to 10^9.
+    The length of the given matchstick array will not exceed 15.
+    提示：提交代码后，需要用简洁的语言解释一下代码思路~ 谢谢
+    历史题目和总结见公众号「每日一道算法题」
+    https://leetcode.com/problems/matchsticks-to-square/description/
+    */
+    public boolean makesquare(int[] nums) {
+        if (nums == null || nums.length < 4) return false;
+        int sum = 0;
+        for (int num : nums) sum += num;
+        if (sum % 4 != 0) return false;
+
+        Arrays.sort(nums);
+        reverse(nums);
+
+        return dfs(nums, new int[4], 0, sum / 4);
+    }
+
+    private boolean dfs(int[] nums, int[] sums, int index, int target) {
+        if (index == nums.length) {
+            if (sums[0] == target && sums[1] == target && sums[2] == target) {
+                return true;
+            }
+            return false;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (sums[i] + nums[index] > target) continue;
+            sums[i] += nums[index];
+            if (dfs(nums, sums, index + 1, target)) return true;
+            sums[i] -= nums[index];
+        }
+
+        return false;
+    }
+
+    private void reverse(int[] nums) {
+        int i = 0, j = nums.length - 1;
+        while (i < j) {
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+            i++; j--;
+        }
+    }
+
+
+    public static void main(String[] args) {
+        int[] nums = {3, 3,3,3,4};
+
+//        System.out.println(makesquare(nums));
     }
 
 
