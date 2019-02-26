@@ -948,15 +948,50 @@ public class ArrayALG {
             int temp = nums[i];
             nums[i] = nums[j];
             nums[j] = temp;
-            i++; j--;
+            i++;
+            j--;
         }
     }
 
+    /*
+    457. Circular Array Loop
+    You are given an array of positive and negative integers. If a number n at an index is positive, then move forward n steps. Conversely, if it’s negative (-n), move backward n steps. Assume the first element of the array is forward next to the last element, and the last element is backward next to the first element. Determine if there is a loop in this array. A loop starts and ends at a particular index with more than 1 element along the loop. The loop must be “forward” or “backward’.
+    Example 1: Given the array [2, -1, 1, 2, 2], there is a loop, from index 0 -> 2 -> 3 -> 0.
+    Example 2: Given the array [-1, 2], there is no loop.
+    Note: The given array is guaranteed to contain no element “0”.
+    Can you do it in O(n) time complexity and O(1) space complexity?
+    提示：提交代码后，需要用简洁的语言解释一下代码思路~ 谢谢
+    历史题目和总结见公众号「每日一道算法题」
+    https://leetcode.com/problems/circular-array-loop/description/
+    */
+    public static boolean circularArrayLoop(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return false;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            int count = 1;
+            int j = i;
+            j =  Math.abs((nums[j] + nums.length + j) % nums.length);
+            int last = 0;
+            while (j > i) {
+                last = j;
+                j = Math.abs((nums[j] + nums.length + j) % nums.length);
+                count++;
+                if (j == nums[j] || count > nums.length - 1) {
+                    break;
+                }
+            }
+            if (count > 1 && j == i && nums[last] + last >= nums.length) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
-        int[] nums = {3, 3,3,3,4};
+        int[] nums = {3,1,2};
 
-//        System.out.println(makesquare(nums));
+        System.out.println(circularArrayLoop(nums));
     }
 
 
