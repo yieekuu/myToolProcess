@@ -1,0 +1,61 @@
+### 解题思路
+
+此处撰写解题思路
+
+### 代码
+
+* cpp
+
+```cpp
+class Solution {
+public:
+    long long buildBridge(int num, vector<vector<int>>& wood) {
+        priority_queue<long long> lps;//左边节点斜率的差分表示假如此时堆内状况为44332211表示起点为1中点为2的线段斜率为-2，起点为2终点为3的线段斜率为-4，以此类推
+        priority_queue<long long,vector<long long>,greater<long long>> rps;//rps存储方式与lps相同只不过存储顺序和斜率都相反
+        //以下将上面两个堆叫做差分数组
+        long long ans=0;
+        long long lmv=0;//左偏移，lps,rps存的是原点但是根据函数叠加之后的定义其实这些原点会产生偏移，直观的表现是山谷的左边和右边的距离会越来越大
+        long long rmv=0;//右偏移
+        lps.push(wood[0][0]);
+        rps.push(wood[0][0]);
+        for(int i=1;i<wood.size();i++)
+        {
+            lmv-=((long long)wood[i][1]-(long long)wood[i][0]);
+            rmv+=((long long)wood[i-1][1]-(long long)wood[i-1][0]);
+            long long l=lps.top()+lmv;//左山谷最底下的那个点的真实坐标也就是下图的p1但是其实凸函数经过叠加之后不是直线，山谷两边的斜率其实在变，p1是指山谷左边斜率从负到非负的第一个点
+            /*\              /
+               \            /
+                \          /
+                 \        /
+                  \______/
+                  p1     p2
+                  本题一直在维护p1左边和p2右边两个线段集合的端点和斜率（用端点排序之后的叠加表示斜率，维护过程中假定p1,p2之间有有一段区间斜率为0，虽然可能区间长度为0）
+            */
+            long long r=rps.top()+rmv;//为图中p2
+            if(wood[i][0]<l)
+            {
+                ans+=(l-(long long)wood[i][0]);
+                lps.pop();//此时p1所在那条负斜率的线段斜率加一直观的形象就是弹出差分数组的头部的一个元素
+                lps.push((long long)wood[i][0]-lmv);//在负斜率的某一个地方此时叠加进去的那个函数斜率从-1到1所以这个点两边的斜率会被拉开2的差距所以根据差分数组的情况添加两次线段起始头
+                lps.push((long long)wood[i][0]-lmv);
+                rps.push(l-rmv);//可知此时斜率为0的区间右端点变更为l,所以往右边点集添加一个l（准确的说是右边的线段斜率都加了1，所以根据差分数组性质更新），不必担心中间斜率为0区间表示是否有错，只要保证左右点集的正确性，便可保持状态。
+            }
+            else if(wood[i][0]>r)//对称情况，与上同
+            {
+                ans+=((long long)wood[i][0]-r);
+                rps.pop();
+                rps.push((long long)wood[i][0]-rmv);
+                rps.push((long long)wood[i][0]-rmv);
+                lps.push(r-lmv);
+            }
+            else
+            {
+                lps.push((long long)wood[i][0]-lmv);//此时修改左右点击的差分表示，因为点落在p1,p2中间，所以中间那段0斜率的区间收缩为0.
+                rps.push((long long)wood[i][0]-rmv);
+            }
+        }
+        return ans;
+    }
+};
+```
+

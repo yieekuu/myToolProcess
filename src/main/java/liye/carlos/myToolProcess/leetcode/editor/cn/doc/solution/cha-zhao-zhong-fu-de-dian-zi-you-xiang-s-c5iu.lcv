@@ -1,0 +1,56 @@
+## SQL：方法一
+
+* sql
+
+```sql
+select email from person group by email having count(email) > 1;
+```
+
+## 解析
+
+通过 `group by` 对 `email` 分组，在使用 `having` 将重复的 `email` 筛选出来。
+
+## SQL：方法二
+
+* sql
+
+```sql
+select t.email from (
+	select email, count(email) num from person group by email
+) t where t.num > 1;
+```
+
+## 解析
+
+将 `email` 分组后计算出相同 `email` 的数量作为临时表，筛选出 `num > 1` 的邮箱
+
+## SQL：方法三
+
+* sql
+
+```sql
+with temp as (
+	select email, count(email) num from person group by email
+) 
+select email from temp where num > 1;
+```
+
+## 解析
+
+使用 `with` 建立临时表，和方法二一样
+
+## SQL：方法四
+
+* sql
+
+```sql
+select distinct person.email from person
+left join person temp on person.email = temp.email
+where person.id != temp.id;
+```
+
+## 解析
+
+使用 `left join` 自连，连接条件是 `person.eamil = temp.email` 并且通过 `where` 把 `person.id != temp.id`筛选出来，最后再通过 `distinct` 去重
+
+参考：https://github.com/astak16/blog-mysql/issues/27

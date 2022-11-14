@@ -1,0 +1,47 @@
+给出一个动态规划O(n m^2)的python解，测试可以解题但是超时。
+
+* python
+
+```python
+class Solution:
+    def buildBridge(self, num: int, wood: List[List[int]]) -> int:
+        # 动态规划的方法
+        # state
+        # f(l, r, h)
+        # function
+        # f(l, r, h) = min_{(l_, r_) and not (r_ < l or r < l_)}(shfit + f(l_, r_, h-1))
+        # initialization
+        # f(l, r, 0)
+        # answer min(f(l, r, len(num)-1))
+
+        if wood is None or num <= 0:
+            return None
+
+        f = []
+        l, r = wood[0]
+        for p in range(1, num+1-(r-l)):
+            v = abs(p - l)
+            f.append((p, p+r-l, v))
+        
+        for h in range(1, len(wood)):
+            l, r = wood[h]
+            f_new = []
+            for p in range(1, num+1-(r-l)):
+                v = None
+                for k in f:
+                    l_, r_, v_ = k
+                    if not(r_ < p or p+r-l < l_):
+                        if v is None or v > v_ + abs(p-l):
+                            v = v_ + abs(p-l)
+                f_new.append((p, p+r-l, v))
+            f = f_new
+
+        min_v = None
+        for k in f:
+            _, _, v = k
+            if min_v is None or v < min_v:
+                min_v = v
+
+        return min_v
+```
+

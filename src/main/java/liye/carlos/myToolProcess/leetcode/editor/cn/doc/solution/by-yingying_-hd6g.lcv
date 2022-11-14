@@ -1,0 +1,97 @@
+如下代码的时间复杂度全部超时，其它题解可通过数学方法AC
+![image.png](https://pic.leetcode-cn.com/1651831749-SNqywP-image.png)
+
+* 
+
+```
+class Solution {
+    //　题解１.dp
+    // 时间复杂度O(n m^2)
+    public long buildBridge(int num, int[][] wood) {
+        long[] pre = new long[num + 1]; //学习：动态规划的状态值：木块左侧位于i位置，和之前的木块 都重叠起来 的最小自然之力值
+        long[] cur = new long[num + 1];
+        Arrays.fill(pre, Long.MAX_VALUE);
+        for (int i = 1, d = wood[0][1] - wood[0][0] + 1; i <= num - d + 1; i++)
+            pre[i] = Math.abs(wood[0][0] - i);
+    
+        for (int i = 1, n = wood.length; i < n; i++) {
+            Arrays.fill(cur, Long.MAX_VALUE);
+            // 遍历当前木块的左边界位置
+            for (int j = 1, d = wood[i][1] - wood[i][0] + 1, end = num - d + 1; j <= end; j++) {
+                int ri = j + d - 1; // 当前木块的右边界
+                int lastD = wood[i - 1][1] - wood[i - 1][0] + 1; // 上一块木块的长度
+
+                // 遍历所有 与当前固定了左边界的木块所重叠的 上一块木块的左边界位置-得到当前木块位置重叠条件下的最小自然之力值
+                for (int lastL = Math.max(1, j - lastD + 1), lastEnd = num - lastD + 1; lastL <= ri && lastL <= lastEnd; lastL++)
+                    cur[j] = Math.min(cur[j], pre[lastL] + Math.abs(wood[i][0] - j));
+            }
+
+            long[] tmp = pre;
+            pre = cur;
+            cur = tmp;
+        }
+        
+        long min = Long.MAX_VALUE;
+        for (int i = 1; i <= num; i++)
+            min = Math.min(min, pre[i]);
+        return min;
+    }
+
+    
+    // 题解1.2 单调队列优化dp 时间复杂度O(mn)
+    public long buildBridge(int num, int[][] wood) {
+        long[] pre = new long[num + 1]; // 木块左侧位于i位置，和之前的木块 都重叠起来 的最小自然之力值
+        long[] cur = new long[num + 1];
+        Arrays.fill(pre, Long.MAX_VALUE);
+        for (int i = 1, d = wood[0][1] - wood[0][0] + 1; i <= num - d + 1; i++)
+            pre[i] = Math.abs(wood[0][0] - i);
+
+        for (int i = 1, n = wood.length; i < n; i++) {
+            Arrays.fill(cur, Long.MAX_VALUE);
+            Deque<Integer> dequeue = new LinkedList(); // 记录滑动区间的最小值 
+            // 当前木块
+            int d = wood[i][1] - wood[i][0] + 1; // 长度
+            int l = 1; // 起始左边界
+            int r = l + d - 1; // 当前木块的右边界
+
+            // 上一块木块
+            int lastD = wood[i - 1][1] - wood[i - 1][0] + 1; // 上一块木块的长度
+            int lastEnd = num - lastD + 1; // 左边界的最右范围值
+            int lLeft = l - lastD + 1; // 上一块木块与其重叠部分的起始左边界
+            int lRight = Math.max(1, lLeft);　//　添加右边界的值进入单调队列，因为重叠区间的左边界有可能小于０
+            while (lRight <= r && lRight <= lastEnd) { // 重叠部分的所有值
+                while (!dequeue.isEmpty() && pre[dequeue.getLast()] > pre[lRight])
+                    dequeue.removeLast();
+                dequeue.addLast(lRight++);
+            }
+            
+            // 当前木块的左边界值的最右范围值
+            int end = num - d + 1;
+            // 滑动区间的最值优化
+            while (l <= end) {
+                int move = Math.abs(wood[i][0] - l);
+                cur[l++] = pre[dequeue.peek()] + move;
+
+                // 当前木块左边界向右滑动
+                if (l <= end) {
+                    lLeft++; // 重叠区间的左边界随着l向右移动也 +１
+                    if(dequeue.peek() == lLeft - 1) dequeue.removeFirst();
+                    while (!dequeue.isEmpty() && pre[dequeue.getLast()] > pre[lRight])
+                        dequeue.removeLast();
+                    dequeue.addLast(lRight++);
+                }
+            }
+
+            long[] tmp = pre;
+            pre = cur;
+            cur = tmp;
+        }
+        
+        long min = Long.MAX_VALUE;
+        for (int i = 1; i <= num; i++)
+            min = Math.min(min, pre[i]);
+        return min;
+    }
+}
+```
+

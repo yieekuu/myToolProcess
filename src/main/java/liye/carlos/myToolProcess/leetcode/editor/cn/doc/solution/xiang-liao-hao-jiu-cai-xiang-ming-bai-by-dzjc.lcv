@@ -1,0 +1,86 @@
+比赛的时候太渣了，一直在想法用线段树来统计斜率的变化，3个小时也没做出来。
+看了题解，思路是明白了，但是不理解如何使用优先级队列来维护这个变化的数组，所以一直在想办法优化存储这个数组的方案, 折腾过块状数组，平衡二叉树，都超时了。。。。
+
+不知道那里来的灵感，今天终于想通了，大致整理以下思路
+
+### 解题思路
+
+官方题解
+https://img.atcoder.jp/arc070/editorial.pdf
+![Screenshot from 2022-05-06 15-53-53.png](https://pic.leetcode-cn.com/1651823664-nkUKOi-Screenshot%20from%202022-05-06%2015-53-53.png)
+
+数组A需要满足的操作
+1. append(d) --- 所有斜率+1，并追加一个长度为d，斜率为1的数值
+2. pop()  --- 所有斜率-1， 返回斜率为0的那段的长度
+3. split(l)  -- 找到斜率为k的线段， 满足sum(A(1)...A(k))>=l>sum(A(1)..A(k-1)), 把这个线段分成三段，长度分别是 d, 0, A(k)-d 其中 d=l-sum(A(1)..A(k-1))
+
+split操作对A的改动比较大，如果立即实施，比较难满足时间限制（或许有在我认知范围外的数据结构可以解决吧， 我尝试过块状数组/平衡树，都没能成功），但是如果split发生在A的最末尾的一个元素，那么split操作就是常数操作，所以可以delay一下split的操作，只在pop的时候检查一下是否需要split; 因为A在不断变化，但是append/pop都只是在一端操作，所以只需要维护split的点集的最小值就可以了
+
+假设在step n时，数组总长度为l1, split操作在累计长度为l的点上
+在step m， pop时数组总长度为l2, 那么原来split的点的累计长度应该调整为 l-l1+l2, 要求最小的split, 只需要维护l-l1的最小堆即可
+
+### 代码
+
+* python
+
+```python
+class LMGR(object):
+    def __init__(self):
+        self.q = deque()
+        self.h = []
+        self.o = 0
+    def append(self, c):
+        self.o+=c
+        self.q.append(c)
+    def split(self, x):
+        heappush(self.h, x-self.o)
+    def pop(self):
+        v = self.q.pop()
+        x = self.h[0]+self.o
+        if x<=v:
+            heappop(self.h)
+            self.q.append(v-x)
+            self.q.append(0)
+            v = x
+        self.o-=v
+        return v
+
+class Solution(object):
+    def buildBridge(self, num, wood):
+        """
+        :type num: int
+        :type wood: List[List[int]]
+        :rtype: int
+        """
+        n = len(wood)
+        q1, q2 = LMGR(), LMGR()
+        q1.append(wood[0][0]-1)
+        q2.append(num-wood[0][0])
+        s, e = wood[0][0], wood[0][0]
+        v, i = 0, 1
+        while i<n:
+            x1, x2 = wood[i]
+            px1, px2 = wood[i-1]
+            if x2<s:
+                d=s-x2
+                v+=d
+                q1.split(d)
+                d = q1.pop()
+                q2.append(e+(px2-px1)-(s-(x2-x1)))
+                s, e = s-d-(x2-x1), s-(x2-x1)
+            elif x1-(px2-px1)>e:
+                d = x1-(px2-px1)-e
+                v+=d
+                q2.split(d)
+                d = q2.pop()
+                q1.append(e+(px2-px1)-(s-(x2-x1)))
+                s, e = e+(px2-px1), e+d+px2-px1
+            else:
+                q1.append(x1-(s-(x2-x1)))
+                q2.append(e+px2-px1-x1)
+                s, e = x1, x1
+            i+=1
+        return v
+
+```
+
