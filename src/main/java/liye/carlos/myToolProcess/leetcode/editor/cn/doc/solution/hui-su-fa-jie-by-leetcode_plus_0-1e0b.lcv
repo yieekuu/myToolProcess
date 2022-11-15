@@ -1,0 +1,49 @@
+### 解题思路
+
+刚学完回溯法，直接套代码框架。
+
+### 代码
+
+* java
+
+```java
+class Solution {
+    List<String> anser;
+    String result;
+    String[] table;
+    int n;
+    String digits;
+
+    public List<String> letterCombinations(String digits) {
+        anser=new ArrayList<>();
+        if (digits == null || digits.length() == 0) {
+            return new ArrayList<>();
+        }
+        result="";
+        this.digits=digits;
+        table=new String[]{"abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+        n=digits.length();
+        backtrack(0);
+        return anser;
+    }
+
+    void backtrack(int t) {
+        if (t == n) {
+            output();
+            return;
+        }
+            int ii=digits.charAt(t)-50;
+            String ss = table[ii];
+            for (int i = 0; i < ss.length(); i++) {
+                result += ss.charAt(i);
+                backtrack(t + 1);
+                result = result.substring(0, result.length() - 1);
+            }
+        }
+
+    void output(){
+        anser.add(result);
+    }
+}
+```
+
