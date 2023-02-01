@@ -1,0 +1,41 @@
+[更多算法动画图解](https://apps.apple.com/cn/app/id1624248084)
+
+**动画**
+![..._Final1674577962.mov](https://leetcode.cn/problems/longest-substring-without-repeating-characters/solution/suan-fa-dong-hua-by-linsen80586-xvlf/fa6ca4ec-5ebe-4692-ad1a-b62397ff46dd)
+
+**思路**
+
+移动和缩放滑动窗口`[start,end]`，始终保持区间内不重复。怎么移动呢，方法如下：
+`end`从头向尾逐个遍历，扩大窗口；
+`start`的位置要保证区间无重复，那就必须跳过区间内有重复的值。所以就需要用哈希表`map`记录每个字符最后一次出现的位置+1，如果这个位置更大说明这个字符又重复了，需要调整start位置到这里。
+
+**算法**
+
+- 定义不重复子串的开始位置为`start`，结束位置为`end`。`[start,end]`区间表示无重复的子串，即滑动窗口。求这个窗口的的最大长度。
+- 定义map的结构(k,v)记录`[start,end]`中不重复子串的位置，其中key值为字符，value值为字符位置+1
+- 随着end不断遍历向后，会遇到与`[start, end]`区间内字符相同的情况，此时将字符作为key值，获取其value值，并更新start，保证`[start,end]`区间内不存在重复字符
+
+* 
+
+```
+func lengthOfLongestSubstring(_ s: String) -> Int {
+    var maxLen = 0
+    var start = 0
+    var map = Dictionary<Character, Int>()
+    let chars = Array(s)
+    for (end, c) in chars.enumerated() {
+        if let pos = map[c] {
+            start = max(start, pos)
+        }
+        map[c] = end + 1
+        maxLen = max(maxLen, end - start + 1)
+    }
+    return maxLen
+}
+```
+
+**复杂度分析**
+
+- 时间复杂度：**O(N)**，其中N是字符串的长度。左指针和右指针分别会遍历整个字符串一次。
+- 空间复杂度：**O(1)**。
+
