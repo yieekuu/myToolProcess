@@ -1,0 +1,43 @@
+### 解题思路
+
+滑动窗口中心思想是考究左右窗口边界如何增减，符合条件右增，不符合条件左增，想要找到的答案就在窗口区间内
+
+### 代码
+
+* python3
+
+```python
+class Solution:
+    def maximumUniqueSubarray(self, nums: List[int]) -> int:
+
+        max_sum,window_sum = 0,0
+
+        # 创立一个字典当作滑动窗口
+        window_dict = {}
+
+        left,right = 0,0
+
+        while right < len(nums):
+            # 每次循环都把右指针指向的元素当作key放入字典中，如果已经存在了，那么键值加一
+            key = nums[right]
+            window_dict[key] = window_dict.get(key,0)+1
+
+            # 如果字典中的键的键值都为一，那么字典长度一定等于right-left+1
+            while len(window_dict) < right-left+1:
+                # 此时字典内有重复元素，此时循环缩小左边界，直到字典内的键值都为一
+                key = nums[left]
+                window_sum -= key
+                window_dict[key] -= 1
+                if window_dict[key] == 0:
+                    del window_dict[key]
+                left += 1
+            else:
+                # 字典内的键值都为一时，此时的滑动窗口一定是连续且无重复元素的子数组，计算字典的键和
+                window_sum += key
+                # 不断对比来找到最大的键和
+                max_sum = max(max_sum, window_sum)
+            right+=1
+
+        return max_sum
+```
+

@@ -52,6 +52,17 @@ public class LongestSubstringWithoutRepeatingCharacters{
 class Solution {
 
           /**
+           * 643, 3, 159, 209,
+           * 1695. 删除子数组的最大得分
+           * 438. 找到字符串中所有字母异位词
+           * 567. 字符串的排列
+           * 487. 最大连续1的个数 II
+           * 1004. 最大连续1的个数 III
+           * 1208. 尽可能使字符串相等
+           * 1052. 爱生气的书店老板
+           * 1423. 可获得的最大点数
+           * 1151. 最少交换次数来组合所有的 1
+           *
            * class Solution:
            *     def problemName(self, s: str) -> int:
            *         # Step 1: 定义需要维护的变量们 (对于滑动窗口类题目，这些变量通常是最小长度，最大长度，或者哈希表)

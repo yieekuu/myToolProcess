@@ -1,0 +1,32 @@
+[1695. 删除子数组的最大得分](https://leetcode.cn/problems/maximum-erasure-value/description/?orderBy=most_votes)
+
+@[toc]
+
+# 滑动窗口
+
+滑动窗口：先剔除不符合的 `nums[start]`，再将 `nums[end]` 加入，最终求 `max(sum)`。
+
+一定要注意，set 里放的时`nums[i]`，而不是 `i`。
+
+* []
+
+```Go
+func maximumUniqueSubarray(nums []int) (maxSum int) {
+    set := map[int]bool{}
+    for start, end, sum := 0, 0, 0; end < len(nums); end++ {
+        for set[nums[end]] { // 因重复而剔除start元素
+            sum -= nums[start]
+            delete(set, nums[start])
+            start++
+        }
+        sum += nums[end] // 加入end元素后的sum
+        maxSum = max(maxSum, sum) // 求max
+        set[nums[end]] = true // 加入end元素
+    }
+    return
+}
+
+func max(a, b int) int {if a > b {return a}; return b}
+```
+
+[参考滑动窗口模板](https://leetcode.cn/problems/longest-substring-without-repeating-characters/solutions/876061/yi-ge-mo-ban-miao-sha-10dao-zhong-deng-n-sb0x/?orderBy=most_votes)
