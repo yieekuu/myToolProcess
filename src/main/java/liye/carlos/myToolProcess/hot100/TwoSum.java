@@ -26,6 +26,9 @@ public class TwoSum {
             }
             sumMap.put(nums[i], i);
         }
+        String s= "";
+        s.toCharArray();
+        int left,right = 0;
         return null;
     }
 }
