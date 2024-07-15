@@ -1,0 +1,207 @@
+> Problem: [23. 合并 K 个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/description/)
+
+[TOC]
+
+# 思路
+
+> 1、找到当前所有链表的最小值
+> 2、将该值添加到新链表中
+> 3、去掉该值，剩下链表的继续比对出最小值，重复上述操作
+
+# 解题过程
+
+> 这里就讲点细节
+> 1、怎么找到所有链表的最小值？
+> ----因为所有的链表都是升序排列，所有我们只需要把所有链表的第一个值比较一遍就可以找到当前最小值
+> 2、怎么去掉比较过的节点？
+> ----用过后直接移动头结点至下一个节点，达到去掉节点的效果
+> 3、递归何时结束
+> ----因为我们会一直移动头结点至下一个节点，那么最后就会移到NULL，当全部链表头结点都变成了NULL，那么就完成了排序
+
+# 暴力搜索版本
+
+* []
+
+```C
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* mergeKLists(struct ListNode** lists, int listsSize) {
+    struct ListNode *new_node = NULL;
+    int min_index = -1;
+    int min_val = INT_MAX;
+
+    for(int i = 0; i < listsSize; i++) // 寻找当前最小节点
+    {
+        if(lists[i])
+        {
+            if(lists[i]->val < min_val)
+            {
+                min_val = lists[i]->val;
+                min_index = i;
+            }
+        }
+    }
+
+    if(min_index != -1) // 若存在当前最小节点
+    {
+        new_node = (struct ListNode *)malloc(1 * sizeof(struct ListNode));
+        new_node->val = min_val;
+        lists[min_index] = lists[min_index]->next; // 用完移动链表至下一个节点
+        new_node->next = mergeKLists(lists, listsSize);
+    }
+
+    return new_node;
+}
+```
+
+# 依次拼接链表版本
+
+但是前一个版得跑300ms这个样子，我们来转换一下思路，改成一条一条链表去拼接
+
+* []
+
+```C
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+struct ListNode *link_list(struct ListNode *list1, struct ListNode *list2)
+{
+    struct ListNode *min_list_node = NULL;
+    
+    if(list1 && list2)
+    {
+        if(list1->val > list2->val)
+        {
+            min_list_node = list2;
+            min_list_node->next = link_list(list1, list2->next);
+        }
+        else
+        {
+            min_list_node = list1;
+            min_list_node->next = link_list(list1->next, list2);
+        }
+    }
+    else if(list1 && !list2)
+    {
+        min_list_node = list1;
+    }
+    else
+    {
+        min_list_node = list2;
+    }
+
+    return min_list_node;
+}
+
+struct ListNode* mergeKLists(struct ListNode** lists, int listsSize) {
+    struct ListNode *sort_list = NULL;
+
+    if(!listsSize)
+    {
+        return sort_list;
+    }
+
+    if(1 == listsSize)
+    {
+        return lists[0];
+    }
+
+    lists[1] = link_list(lists[0], lists[1]); // 拼接链表
+
+    sort_list = mergeKLists(&lists[1], listsSize - 1); // 递归拼接所有链表
+
+    return sort_list;
+}
+```
+
+# 拼接链表优化版本
+
+虽然说拼接起来了，但是还是跑了三百多ms，思考了一下，应该是因为这样逐次拼接导致头条链表会过长，那么就可能出现[1,1,1,...,1,1,2],[1,5]这样拼起来很慢的情况，为了解决这个问题，我们试着把链表的拼接分批次进行，让他们一半一半地缩减
+
+* []
+
+```C
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+struct ListNode *link_list(struct ListNode *list1, struct ListNode *list2)
+{
+    struct ListNode *min_list_node = NULL;
+
+    if(list1 && list2)
+    {
+        if(list1->val > list2->val)
+        {
+            min_list_node = list2;
+            min_list_node->next = link_list(list1, list2->next);
+        }
+        else
+        {
+            min_list_node = list1;
+            min_list_node->next = link_list(list1->next, list2);
+        }
+    }
+    else if(list1 && !list2)
+    {
+        min_list_node = list1;
+    }
+    else if(!list1 && list2)
+    {
+        min_list_node = list2;
+    }
+
+    return min_list_node;
+}
+
+struct ListNode* mergeKLists(struct ListNode** lists, int listsSize) {
+    struct ListNode *sort_list = NULL;
+    struct ListNode *list1 = NULL;
+    struct ListNode *list2 = NULL;
+
+    if(!listsSize)
+    {
+        return sort_list;
+    }
+
+    for(int i = listsSize + 1; i > 0; i /= 2) // 分批拼接，防止一条链表过长的问题
+    {
+        int index = 0;
+        for(int j = 0; j < listsSize; j += 2)
+        {
+            list1 = lists[j];
+            if(j + 1 <= listsSize - 1)
+            {
+                list2 = lists[j + 1];
+            }
+            else
+            {
+                list2 = NULL;
+            }
+            lists[index++] = link_list(list1, list2);
+        }
+        listsSize = (listsSize + 1) / 2;
+    }
+    sort_list = lists[0];
+
+    return sort_list;
+}
+```
+
+最终
+![image.png](https://pic.leetcode.cn/1721046588-ULsATg-image.png)
+
